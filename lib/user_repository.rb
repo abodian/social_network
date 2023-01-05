@@ -1,41 +1,55 @@
 require_relative "./user"
 
 class UserRepository
-
-  # Selecting all records
-  # No arguments
   def all
-    # Executes the SQL query:
-    # SELECT id, username, user_email FROM users;
+    sql = "SELECT id, username, user_email FROM users;"
+    result_set = DatabaseConnection.exec_params(sql, [])
 
-    # Returns an array of User objects.
+    users = []
+
+    result_set.each do |record|
+      user = User.new
+      user.id = record['id']
+      user.username = record['username']
+      user.user_email = record['user_email']
+
+      users << user
+    end
+    return users
   end
 
-  # Gets a single record by its ID
-  # One argument: the id (number)
   def find(id)
-    # Executes the SQL query:
-    # SELECT id, username, user_email FROM users WHERE id = $1;
+    sql = "SELECT id, username, user_email FROM users WHERE id = $1;"
+    params = [id]
+    result_set = DatabaseConnection.exec_params(sql, params)
+    record = result_set[0]
 
-    # Returns a single User object.
+    user = User.new
+    user.id = record['id']
+    user.username = record['username']
+    user.user_email = record['user_email']
+    return user
   end
-
-  # Add more methods below for each operation you'd like to implement.
 
   def create(user)
-    # Executes the SQL query:
-    # INSERT INTO users (username, user_email) VALUES($1, $2);
+    sql = "INSERT INTO users (username, user_email) VALUES($1, $2);"
+    params = [user.username, user.user_email]
+    DatabaseConnection.exec_params(sql, params)
 
-    # returns nothing
+    return nil
   end
 
   def update(user)
-   # Executes the SQL query:
-   # UPDATE users SET username = $1, user_email = $2 WHERE id = $3
+   sql = "UPDATE users SET username = $1, user_email = $2 WHERE id = $3"
+   params = [user.username, user.user_email, user.id]
+   DatabaseConnection.exec_params(sql, params)
+
+   return nil
   end
 
   def delete(user)
-    # Executes the SQL query:
-    # DELETE FROM users WHERE id = $1
+    sql = "DELETE FROM users WHERE id = $1"
+    params = [user]
+    DatabaseConnection.exec_params(sql, params)
   end
 end

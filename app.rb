@@ -1,13 +1,16 @@
 require_relative 'lib/database_connection'
+require_relative 'lib/user_repository'
+require_relative 'lib/post_repository'
 
-# We need to give the database name to the method `connect`.
 DatabaseConnection.connect('social_network')
 
-# Perform a SQL query on the database and get the result set.
-# sql = 'SELECT id, title FROM albums;'
-# result = DatabaseConnection.exec_params(sql, [])
 
-# # Print out each record from the result set .
-# result.each do |record|
-#   p record
-# end
+user_repository = UserRepository.new
+
+user_repository.all.each do |user|
+  puts user.username
+end
+
+single_user = user_repository.find(1)
+
+puts single_user.id
